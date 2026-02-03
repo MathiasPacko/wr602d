@@ -1,0 +1,33 @@
+# Symfony
+/app/var/
+/app/vendor/
+/app/.env.local
+/app/.env.local.php
+/app/.env.*.local
+/app/config/secrets/prod/prod.decrypt.private.php
+/app/public/bundles/
+/app/public/build/
+
+# PHPUnit
+/app/.phpunit.result.cache
+/app/phpunit.xml
+
+# Composer
+/app/composer.phar
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+db_data/
+
+# Logs
+*.log

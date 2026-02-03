@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # Application Symfony
+  symfony:
+    image: mmi3docker/symfony-2024
+    container_name: symfony_app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app:/var/www/html
+    depends_on:
+      - database
+      - gotenberg
+    environment:
+      - APP_ENV=dev
+      - DATABASE_URL=mysql://root:root@database:3306/pdf_service?serverVersion=8.0
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+
+  # Base de données MySQL
+  database:
+    image: mysql:8.0
+    container_name: symfony_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pdf_service
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # Micro-service Gotenberg pour génération PDF
+  gotenberg:
+    image: gotenberg/gotenberg:8
+    container_name: gotenberg_pdf
+    ports:
+      - "3000:3000"
+    restart: always
+
+  # PHPMyAdmin (optionnel, pour administration DB)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: symfony_phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: database
+      MYSQL_ROOT_PASSWORD: root
+    depends_on:
+      - database
+
+volumes:
+  db_data:
