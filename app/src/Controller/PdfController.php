@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Generation;
+use App\Form\UrlToPdfType;
 use App\Repository\GenerationRepository;
 use App\Service\GotenbergService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -88,13 +89,13 @@ class PdfController extends AbstractController
             return $this->redirectToRoute('app_pdf_index');
         }
 
-        if ($request->isMethod('POST')) {
-            $url = $request->request->get('url');
+        // Créer le formulaire
+        $form = $this->createForm(UrlToPdfType::class);
+        $form->handleRequest($request);
 
-            if (empty($url) || !filter_var($url, FILTER_VALIDATE_URL)) {
-                $this->addFlash('error', 'Une URL valide est requise.');
-                return $this->redirectToRoute('app_pdf_convert_url');
-            }
+        // Si le formulaire est soumis et valide
+        if ($form->isSubmitted() && $form->isValid()) {
+            $url = $form->getData()['url'];
 
             try {
                 $pdfContent = $this->gotenbergService->convertUrlToPdf($url);
@@ -112,7 +113,9 @@ class PdfController extends AbstractController
             }
         }
 
-        return $this->render('pdf/convert_url.html.twig');
+        return $this->render('pdf/convert_url.html.twig', [
+            'form' => $form,
+        ]);
     }
 
     #[Route('/convert/office', name: 'app_pdf_convert_office', methods: ['GET', 'POST'])]
