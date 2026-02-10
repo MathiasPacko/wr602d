@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un contact - PDF Converter{% endblock %}
+
+{% block body %}
+<h1>Ajouter un contact</h1>
+
+<div class="card" style="max-width: 500px;">
+    {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
+        <div class="form-group">
+            {{ form_label(form.firstname) }}
+            {{ form_widget(form.firstname) }}
+            {{ form_errors(form.firstname) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.lastname) }}
+            {{ form_widget(form.lastname) }}
+            {{ form_errors(form.lastname) }}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.email) }}
+            {{ form_widget(form.email) }}
+            {{ form_errors(form.email) }}
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+            {{ form_widget(form.submit) }}
+            <a href="{{ path('app_contacts') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

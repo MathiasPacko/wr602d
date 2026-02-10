@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Abonnement - PDF Converter{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+    .plan-card { background: white; border-radius: 16px; padding: 2rem; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; transition: transform 0.2s; }
+    .plan-card:hover { transform: translateY(-5px); }
+    .plan-card.current { border: 3px solid #3498db; }
+    .plan-card.featured { border: 3px solid #9b59b6; }
+    .plan-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #9b59b6; color: white; padding: 0.25rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+    .current-badge { background: #3498db; }
+    .plan-name { font-size: 1.5rem; font-weight: bold; color: #2c3e50; margin-bottom: 0.5rem; }
+    .plan-price { font-size: 2.5rem; font-weight: bold; color: #27ae60; margin: 1rem 0; }
+    .plan-price span { font-size: 1rem; color: #7f8c8d; }
+    .plan-price .original { text-decoration: line-through; color: #bdc3c7; font-size: 1.2rem; display: block; }
+    .plan-features { list-style: none; margin: 1.5rem 0; text-align: left; }
+    .plan-features li { padding: 0.5rem 0; border-bottom: 1px solid #eee; }
+    .plan-features li:last-child { border-bottom: none; }
+    .plan-features .check { color: #27ae60; margin-right: 0.5rem; }
+</style>
+{% endblock %}
+
+{% block body %}
+<h1>Choisir votre abonnement</h1>
+<p class="text-muted">Sélectionnez le plan qui correspond à vos besoins</p>
+
+<div class="plans-grid">
+    {% for plan in plans %}
+    <div class="plan-card {% if current_plan and current_plan.id == plan.id %}current{% endif %} {% if plan.name == 'PREMIUM' %}featured{% endif %}">
+        {% if current_plan and current_plan.id == plan.id %}
+            <span class="plan-badge current-badge">Plan actuel</span>
+        {% elseif plan.name == 'PREMIUM' %}
+            <span class="plan-badge">Recommandé</span>
+        {% endif %}
+
+        <h2 class="plan-name">{{ plan.name }}</h2>
+
+        <div class="plan-price">
+            {% if plan.specialPrice and plan.specialPriceFrom <= date() and plan.specialPriceTo >= date() %}
+                <span class="original">{{ plan.price|number_format(2, ',', ' ') }} €</span>
+                {{ plan.specialPrice|number_format(2, ',', ' ') }} €
+            {% else %}
+                {{ plan.price|number_format(2, ',', ' ') }} €
+            {% endif %}
+            <span>/mois</span>
+        </div>
+
+        <ul class="plan-features">
+            <li><span class="check">✓</span>
+                {% if plan.limitGeneration == -1 %}
+                    Conversions <strong>illimitées</strong>
+                {% else %}
+                    <strong>{{ plan.limitGeneration }}</strong> conversions / jour
+                {% endif %}
+            </li>
+            <li><span class="check">✓</span> Conversion URL vers PDF</li>
+            <li><span class="check">✓</span> Conversion HTML vers PDF</li>
+            <li><span class="check">✓</span> Conversion Office vers PDF</li>
+            {% if plan.name != 'FREE' %}
+                <li><span class="check">✓</span> Support prioritaire</li>
+            {% endif %}
+        </ul>
+
+        {% if plan.description %}
+            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1rem;">{{ plan.description }}</p>
+        {% endif %}
+
+        {% if current_plan and current_plan.id == plan.id %}
+            <button class="btn btn-secondary w-100" disabled>Plan actuel</button>
+        {% else %}
+            <form method="post" action="{{ path('app_subscription_change', {id: plan.id}) }}" data-turbo="false">
+                <input type="hidden" name="_token" value="{{ csrf_token('change_plan_' ~ plan.id) }}">
+                <button type="submit" class="btn {% if plan.name == 'PREMIUM' %}btn-success{% else %}btn-primary{% endif %} w-100">
+                    Choisir ce plan
+                </button>
+            </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

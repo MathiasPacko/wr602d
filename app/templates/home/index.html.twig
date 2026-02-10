@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - PDF Converter{% endblock %}
+
+{% block body %}
+<h1 style="margin-bottom: 2rem;">Bienvenue, {{ user.firstname }} !</h1>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+    <div class="card">
+        <h3 class="card-title">Votre abonnement</h3>
+        <p style="font-size: 1.5rem; font-weight: bold; color: #3498db; margin-bottom: 0.5rem;">
+            {{ plan ? plan.name : 'FREE' }}
+        </p>
+        <p class="text-muted">
+            {% if is_unlimited %}
+                Conversions illimitées
+            {% else %}
+                {{ daily_limit }} conversions / jour
+            {% endif %}
+        </p>
+        <a href="{{ path('app_subscription') }}" class="btn btn-secondary btn-sm mt-2">Changer d'abonnement</a>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">Conversions aujourd'hui</h3>
+        <p style="font-size: 2.5rem; font-weight: bold; color: #27ae60;">
+            {{ today_generations }}
+            {% if not is_unlimited %}
+                <span style="font-size: 1rem; color: #7f8c8d;">/ {{ daily_limit }}</span>
+            {% endif %}
+        </p>
+        {% if not is_unlimited %}
+            <div style="background: #ecf0f1; border-radius: 10px; height: 10px; overflow: hidden; margin-top: 1rem;">
+                <div style="background: #27ae60; height: 100%; width: {{ (today_generations / daily_limit * 100)|round }}%;"></div>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">Total des conversions</h3>
+        <p style="font-size: 2.5rem; font-weight: bold; color: #9b59b6;">
+            {{ total_generations }}
+        </p>
+        <a href="{{ path('app_history') }}" class="btn btn-secondary btn-sm mt-2">Voir l'historique</a>
+    </div>
+</div>
+
+<h2 style="margin: 2rem 0 1rem;">Actions rapides</h2>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+    <a href="{{ path('app_pdf_convert_url') }}" class="card" style="text-decoration: none; text-align: center; transition: transform 0.2s;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🌐</div>
+        <h3 style="color: #2c3e50; margin-bottom: 0.5rem;">URL vers PDF</h3>
+        <p class="text-muted" style="font-size: 0.9rem;">Convertir une page web</p>
+    </a>
+
+    <a href="{{ path('app_pdf_convert_html') }}" class="card" style="text-decoration: none; text-align: center; transition: transform 0.2s;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📝</div>
+        <h3 style="color: #2c3e50; margin-bottom: 0.5rem;">HTML vers PDF</h3>
+        <p class="text-muted" style="font-size: 0.9rem;">Convertir du code HTML</p>
+    </a>
+
+    <a href="{{ path('app_pdf_convert_office') }}" class="card" style="text-decoration: none; text-align: center; transition: transform 0.2s;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📄</div>
+        <h3 style="color: #2c3e50; margin-bottom: 0.5rem;">Office vers PDF</h3>
+        <p class="text-muted" style="font-size: 0.9rem;">Word, Excel, PowerPoint</p>
+    </a>
+
+    <a href="{{ path('app_contacts') }}" class="card" style="text-decoration: none; text-align: center; transition: transform 0.2s;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">👥</div>
+        <h3 style="color: #2c3e50; margin-bottom: 0.5rem;">Mes contacts</h3>
+        <p class="text-muted" style="font-size: 0.9rem;">Gérer vos destinataires</p>
+    </a>
+</div>
+{% endblock %}

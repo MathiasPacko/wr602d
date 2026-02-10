@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - PDF Converter</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .login-container { background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); width: 100%; max-width: 400px; }
+        .login-header { text-align: center; margin-bottom: 2rem; }
+        .login-header h1 { color: #2c3e50; font-size: 1.75rem; margin-bottom: 0.5rem; }
+        .login-header p { color: #7f8c8d; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333; }
+        .form-control { width: 100%; padding: 0.875rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; }
+        .form-control:focus { outline: none; border-color: #667eea; }
+        .btn { width: 100%; padding: 0.875rem; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: 600; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
+        .checkbox-group { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .checkbox-group input { width: 18px; height: 18px; }
+        .checkbox-group label { margin: 0; font-weight: normal; color: #666; }
+        .links { text-align: center; margin-top: 1.5rem; }
+        .links a { color: #667eea; text-decoration: none; font-size: 0.9rem; }
+        .links a:hover { text-decoration: underline; }
+        .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        .alert-danger { background: #fee; color: #c00; border: 1px solid #fcc; }
+        .alert-success { background: #efe; color: #060; border: 1px solid #cfc; }
+        .divider { text-align: center; margin: 1.5rem 0; color: #999; position: relative; }
+        .divider::before, .divider::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: #ddd; }
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>PDF Converter</h1>
+            <p>Connectez-vous à votre compte</p>
+        </div>
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+
+        <form method="post" data-turbo="false">
+            <div class="form-group">
+                <label for="username">Email</label>
+                <input type="email" id="username" name="_username" class="form-control" value="{{ last_username }}" required autofocus placeholder="votre@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" id="password" name="_password" class="form-control" required placeholder="Votre mot de passe">
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="remember_me" name="_remember_me">
+                <label for="remember_me">Se souvenir de moi</label>
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <button type="submit" class="btn btn-primary">Se connecter</button>
+        </form>
+
+        <div class="links">
+            <a href="{{ path('app_forgot_password') }}">Mot de passe oublié ?</a>
+            <div class="divider">ou</div>
+            <a href="{{ path('app_register') }}">Créer un compte</a>
+        </div>
+    </div>
+</body>
+</html>
