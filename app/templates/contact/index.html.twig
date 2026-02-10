@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes contacts - PDF Converter{% endblock %}
+
+{% block body %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>Mes contacts</h1>
+    <a href="{{ path('app_contact_add') }}" class="btn btn-primary">+ Ajouter un contact</a>
+</div>
+
+{% if contacts|length > 0 %}
+    <div class="card">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Email</th>
+                    <th style="width: 150px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in contacts %}
+                <tr>
+                    <td>{{ contact.lastname }}</td>
+                    <td>{{ contact.firstname }}</td>
+                    <td>{{ contact.email }}</td>
+                    <td>
+                        <a href="{{ path('app_contact_edit', {id: contact.id}) }}" class="btn btn-secondary btn-sm">Modifier</a>
+                        <form method="post" action="{{ path('app_contact_delete', {id: contact.id}) }}" style="display: inline;" data-turbo="false" onsubmit="return confirm('Supprimer ce contact ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_contact_' ~ contact.id) }}">
+                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="card text-center" style="padding: 3rem;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">👥</div>
+        <h3>Aucun contact</h3>
+        <p class="text-muted">Vous n'avez pas encore ajouté de contacts.</p>
+        <a href="{{ path('app_contact_add') }}" class="btn btn-primary mt-2">Ajouter un contact</a>
+    </div>
+{% endif %}
+{% endblock %}

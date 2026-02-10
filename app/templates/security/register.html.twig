@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - PDF Converter</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 0; }
+        .register-container { background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); width: 100%; max-width: 450px; }
+        .register-header { text-align: center; margin-bottom: 2rem; }
+        .register-header h1 { color: #2c3e50; font-size: 1.75rem; margin-bottom: 0.5rem; }
+        .register-header p { color: #7f8c8d; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333; }
+        .form-control { width: 100%; padding: 0.875rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; }
+        .form-control:focus { outline: none; border-color: #667eea; }
+        .btn { width: 100%; padding: 0.875rem; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: 600; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
+        .links { text-align: center; margin-top: 1.5rem; }
+        .links a { color: #667eea; text-decoration: none; }
+        .links a:hover { text-decoration: underline; }
+        .error-list { color: #e74c3c; font-size: 0.875rem; margin-top: 0.25rem; list-style: none; }
+        .row { display: flex; gap: 1rem; }
+        .row .form-group { flex: 1; }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <h1>Créer un compte</h1>
+            <p>Rejoignez PDF Converter gratuitement</p>
+        </div>
+
+        {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
+            <div class="row">
+                <div class="form-group">
+                    {{ form_label(form.firstname) }}
+                    {{ form_widget(form.firstname) }}
+                    {{ form_errors(form.firstname) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.lastname) }}
+                    {{ form_widget(form.lastname) }}
+                    {{ form_errors(form.lastname) }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.email) }}
+                {{ form_widget(form.email) }}
+                {{ form_errors(form.email) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.plainPassword.first) }}
+                {{ form_widget(form.plainPassword.first) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.plainPassword.second) }}
+                {{ form_widget(form.plainPassword.second) }}
+                {{ form_errors(form.plainPassword) }}
+            </div>
+
+            {{ form_widget(form.submit) }}
+        {{ form_end(form) }}
+
+        <div class="links">
+            <p>Déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+        </div>
+    </div>
+</body>
+</html>

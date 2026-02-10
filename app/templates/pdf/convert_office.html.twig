@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Office vers PDF - PDF Converter{% endblock %}
+
+{% block body %}
+<h1>Convertir un fichier Office en PDF</h1>
+
+<div class="card" style="max-width: 600px;">
+    <div class="alert" style="background: #e8f4fd; color: #1565c0; border: 1px solid #90caf9; margin-bottom: 1.5rem;">
+        <strong>Formats supportés :</strong><br>
+        Word (.doc, .docx), Excel (.xls, .xlsx), PowerPoint (.ppt, .pptx), OpenDocument (.odt, .ods, .odp)
+    </div>
+
+    <form method="post" enctype="multipart/form-data" data-turbo="false">
+        <div class="form-group">
+            <label for="file">Fichier à convertir</label>
+            <input type="file" name="file" id="file" class="form-control" required
+                   accept=".doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.odp">
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-primary">Générer le PDF</button>
+            <a href="{{ path('app_pdf_index') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

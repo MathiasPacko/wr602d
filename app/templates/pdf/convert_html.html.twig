@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}HTML vers PDF - PDF Converter{% endblock %}
+
+{% block stylesheets %}
+<style>
+    textarea.form-control { min-height: 300px; font-family: 'Monaco', 'Menlo', monospace; font-size: 0.9rem; }
+    .options-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .options-row .form-group { margin-bottom: 0; }
+</style>
+{% endblock %}
+
+{% block body %}
+<h1>Convertir du HTML en PDF</h1>
+
+<div class="card" style="max-width: 800px;">
+    <form method="post" data-turbo="false">
+        <div class="form-group">
+            <label for="html_content">Code HTML</label>
+            <textarea name="html_content" id="html_content" class="form-control" required placeholder="<!DOCTYPE html>
+<html>
+<head>
+    <title>Mon document</title>
+</head>
+<body>
+    <h1>Titre</h1>
+    <p>Contenu de votre document...</p>
+</body>
+</html>"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Marges (en pouces)</label>
+            <div class="options-row">
+                <div class="form-group">
+                    <label for="margin_top">Haut</label>
+                    <input type="text" name="margin_top" id="margin_top" class="form-control" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="margin_bottom">Bas</label>
+                    <input type="text" name="margin_bottom" id="margin_bottom" class="form-control" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="margin_left">Gauche</label>
+                    <input type="text" name="margin_left" id="margin_left" class="form-control" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="margin_right">Droite</label>
+                    <input type="text" name="margin_right" id="margin_right" class="form-control" value="1">
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-primary">Générer le PDF</button>
+            <a href="{{ path('app_pdf_index') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
