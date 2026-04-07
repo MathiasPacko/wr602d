@@ -3,20 +3,44 @@
 {% block title %}URL vers PDF - PDF Converter{% endblock %}
 
 {% block body %}
-<h1>Convertir une URL en PDF</h1>
+<div class="page-header">
+    <h1>Convertir une URL en PDF</h1>
+    <p>Entrez l'URL d'une page web pour la convertir en document PDF</p>
+</div>
 
 <div class="card" style="max-width: 600px;">
-    {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
+    <div class="flex gap-2 items-center mb-3" style="padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle);">
+        <div class="card-icon" style="margin-bottom: 0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+        </div>
+        <div>
+            <h3 style="font-size: 0.9375rem; font-weight: 600; margin-bottom: 2px;">URL vers PDF</h3>
+            <p class="text-tertiary" style="font-size: 0.8125rem;">La page sera capturee telle qu'elle apparait dans un navigateur</p>
+        </div>
+    </div>
+
+    <form method="post" data-turbo="false">
         <div class="form-group">
-            {{ form_label(form.url) }}
-            {{ form_widget(form.url) }}
-            {{ form_errors(form.url) }}
+            <label for="url">URL de la page</label>
+            <input type="url" name="url" id="url" class="form-control" required
+                   placeholder="https://exemple.com">
         </div>
 
-        <div style="display: flex; gap: 1rem;">
-            {{ form_widget(form.submit) }}
+        {{ include('pdf/_email_options.html.twig', { contacts: contacts|default([]) }) }}
+
+        <div class="flex gap-1 mt-3">
+            <button type="submit" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                Generer le PDF
+            </button>
             <a href="{{ path('app_pdf_index') }}" class="btn btn-secondary">Annuler</a>
         </div>
-    {{ form_end(form) }}
+    </form>
 </div>
 {% endblock %}

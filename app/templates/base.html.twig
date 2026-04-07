@@ -1,89 +1,754 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{% block title %}PDF Converter{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>📄</text></svg>">
-        <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; min-height: 100vh; }
-            .navbar { background: #2c3e50; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-            .navbar-brand { color: white; font-size: 1.5rem; font-weight: bold; text-decoration: none; }
-            .navbar-nav { display: flex; gap: 1.5rem; list-style: none; align-items: center; }
-            .navbar-nav a { color: rgba(255,255,255,0.8); text-decoration: none; transition: color 0.2s; }
-            .navbar-nav a:hover { color: white; }
-            .navbar-nav .active { color: white; font-weight: 500; }
-            .user-info { color: rgba(255,255,255,0.7); font-size: 0.9rem; }
-            .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-            .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
-            .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-            .alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-            .alert-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-            .btn { display: inline-block; padding: 0.6rem 1.2rem; border-radius: 6px; text-decoration: none; border: none; cursor: pointer; font-size: 1rem; transition: all 0.2s; }
-            .btn-primary { background: #3498db; color: white; }
-            .btn-primary:hover { background: #2980b9; }
-            .btn-success { background: #27ae60; color: white; }
-            .btn-success:hover { background: #219a52; }
-            .btn-danger { background: #e74c3c; color: white; }
-            .btn-danger:hover { background: #c0392b; }
-            .btn-secondary { background: #95a5a6; color: white; }
-            .btn-secondary:hover { background: #7f8c8d; }
-            .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.875rem; }
-            .card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 1.5rem; margin-bottom: 1rem; }
-            .card-title { font-size: 1.25rem; margin-bottom: 1rem; color: #2c3e50; }
-            .form-group { margin-bottom: 1rem; }
-            .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333; }
-            .form-control { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; transition: border-color 0.2s; }
-            .form-control:focus { outline: none; border-color: #3498db; }
-            .table { width: 100%; border-collapse: collapse; }
-            .table th, .table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #eee; }
-            .table th { background: #f8f9fa; font-weight: 600; }
-            .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
-            .badge-success { background: #27ae60; color: white; }
-            .badge-warning { background: #f39c12; color: white; }
-            .badge-info { background: #3498db; color: white; }
-            .badge-secondary { background: #95a5a6; color: white; }
-            .text-muted { color: #7f8c8d; }
-            .text-center { text-align: center; }
-            .mt-1 { margin-top: 0.5rem; }
-            .mt-2 { margin-top: 1rem; }
-            .mb-2 { margin-bottom: 1rem; }
-            .w-100 { width: 100%; }
-        </style>
-        {% block stylesheets %}{% endblock %}
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% if app.user %}
-        <nav class="navbar">
-            <a href="{{ path('app_home') }}" class="navbar-brand">PDF Converter</a>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PDF Converter{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23007AFF%22 width=%22100%22 height=%22100%22 rx=%2222%22/><text y=%22.9em%22 x=%2250%22 text-anchor=%22middle%22 font-size=%2255%22 fill=%22white%22>P</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Zinc palette - light mode */
+            --zinc-950: #09090b;
+            --zinc-900: #18181b;
+            --zinc-800: #27272a;
+            --zinc-700: #3f3f46;
+            --zinc-600: #52525b;
+            --zinc-500: #71717a;
+            --zinc-400: #a1a1aa;
+            --zinc-300: #d4d4d8;
+            --zinc-200: #e4e4e7;
+            --zinc-100: #f4f4f5;
+            --zinc-50: #fafafa;
+
+            /* Accent - Electric Blue */
+            --accent: #007AFF;
+            --accent-hover: #0062cc;
+            --accent-subtle: rgba(0, 122, 255, 0.08);
+            --accent-glow: rgba(0, 122, 255, 0.15);
+
+            /* Semantic */
+            --success: #16a34a;
+            --success-subtle: rgba(22, 163, 74, 0.1);
+            --warning: #d97706;
+            --warning-subtle: rgba(217, 119, 6, 0.1);
+            --danger: #dc2626;
+            --danger-subtle: rgba(220, 38, 38, 0.1);
+
+            /* Surfaces */
+            --bg-primary: #fafafa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: var(--zinc-100);
+            --bg-elevated: #ffffff;
+
+            /* Text */
+            --text-primary: var(--zinc-900);
+            --text-secondary: var(--zinc-600);
+            --text-tertiary: var(--zinc-500);
+
+            /* Borders */
+            --border-default: var(--zinc-200);
+            --border-subtle: var(--zinc-100);
+            --border-accent: var(--accent);
+
+            /* Radius */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+            --shadow-accent: 0 0 0 1px var(--accent);
+
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ═══════════════════════════════════════════
+           NAVBAR
+        ═══════════════════════════════════════════ */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-default);
+        }
+
+        .navbar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+            transition: opacity var(--transition-fast);
+        }
+
+        .navbar-brand:hover {
+            opacity: 0.8;
+        }
+
+        .navbar-brand .logo {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: white;
+        }
+
+        .navbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            list-style: none;
+        }
+
+        .navbar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 8px 14px;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all var(--transition-fast);
+        }
+
+        .navbar-nav a:hover {
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+        }
+
+        .navbar-nav a.active {
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: 16px;
+            padding-left: 16px;
+            border-left: 1px solid var(--border-subtle);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: white;
+        }
+
+        .user-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .logout-btn {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            color: var(--danger);
+            background: var(--danger-subtle);
+        }
+
+        /* ═══════════════════════════════════════════
+           MAIN CONTAINER
+        ═══════════════════════════════════════════ */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* ═══════════════════════════════════════════
+           PAGE HEADER
+        ═══════════════════════════════════════════ */
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+        }
+
+        /* ═══════════════════════════════════════════
+           ALERTS
+        ═══════════════════════════════════════════ */
+        .alert {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            animation: alertSlide 0.3s ease;
+        }
+
+        @keyframes alertSlide {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert-success {
+            background: var(--success-subtle);
+            color: var(--success);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .alert-danger {
+            background: var(--danger-subtle);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .alert-warning {
+            background: var(--warning-subtle);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .alert svg {
+            flex-shrink: 0;
+        }
+
+        /* ═══════════════════════════════════════════
+           CARDS
+        ═══════════════════════════════════════════ */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            transition: all var(--transition-base);
+        }
+
+        .card-hoverable {
+            cursor: pointer;
+        }
+
+        .card-hoverable:hover {
+            border-color: var(--zinc-700);
+            background: var(--bg-tertiary);
+        }
+
+        .card-accent {
+            border-color: var(--accent);
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            letter-spacing: -0.01em;
+        }
+
+        .card-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--accent-subtle);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .card-icon svg {
+            width: 22px;
+            height: 22px;
+            color: var(--accent);
+        }
+
+        /* ═══════════════════════════════════════════
+           BUTTONS
+        ═══════════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-default);
+        }
+
+        .btn-secondary:hover {
+            background: var(--zinc-700);
+            border-color: var(--zinc-600);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .btn-ghost:hover {
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8125rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+        }
+
+        .btn-icon.btn-sm {
+            width: 32px;
+            height: 32px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        /* ═══════════════════════════════════════════
+           FORMS
+        ═══════════════════════════════════════════ */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 11px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            transition: all var(--transition-fast);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-subtle);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.6;
+        }
+
+        /* ═══════════════════════════════════════════
+           TABLES
+        ═══════════════════════════════════════════ */
+        .table-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            padding: 12px 20px;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-default);
+        }
+
+        .table td {
+            padding: 16px 20px;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tr:hover td {
+            background: var(--zinc-50);
+        }
+
+        /* ═══════════════════════════════════════════
+           BADGES
+        ═══════════════════════════════════════════ */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-primary {
+            background: var(--accent-subtle);
+            color: var(--accent);
+        }
+
+        .badge-success {
+            background: var(--success-subtle);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: var(--warning-subtle);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: var(--danger-subtle);
+            color: var(--danger);
+        }
+
+        .badge-neutral {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+
+        /* ═══════════════════════════════════════════
+           STATUS INDICATOR
+        ═══════════════════════════════════════════ */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.online {
+            background: var(--success);
+        }
+
+        .status-dot.offline {
+            background: var(--danger);
+        }
+
+
+        /* ═══════════════════════════════════════════
+           GRID
+        ═══════════════════════════════════════════ */
+        .grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        @media (max-width: 900px) {
+            .grid-3, .grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ═══════════════════════════════════════════
+           UTILITIES
+        ═══════════════════════════════════════════ */
+        .text-primary { color: var(--text-primary); }
+        .text-secondary { color: var(--text-secondary); }
+        .text-tertiary { color: var(--text-tertiary); }
+        .text-accent { color: var(--accent); }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-mono { font-family: 'Geist Mono', monospace; }
+
+        .mt-1 { margin-top: 8px; }
+        .mt-2 { margin-top: 16px; }
+        .mt-3 { margin-top: 24px; }
+        .mt-4 { margin-top: 32px; }
+        .mb-1 { margin-bottom: 8px; }
+        .mb-2 { margin-bottom: 16px; }
+        .mb-3 { margin-bottom: 24px; }
+        .mb-4 { margin-bottom: 32px; }
+
+        .flex { display: flex; }
+        .flex-center { display: flex; align-items: center; justify-content: center; }
+        .flex-between { display: flex; align-items: center; justify-content: space-between; }
+        .items-center { align-items: center; }
+        .gap-1 { gap: 8px; }
+        .gap-2 { gap: 16px; }
+        .gap-3 { gap: 24px; }
+
+        .w-full { width: 100%; }
+
+        /* ═══════════════════════════════════════════
+           SCROLLBAR
+        ═══════════════════════════════════════════ */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--zinc-300);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--zinc-400);
+        }
+
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+        ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+            .navbar-inner {
+                height: auto;
+                flex-direction: column;
+                padding: 12px 16px;
+                gap: 12px;
+            }
+
+            .navbar-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .user-menu {
+                margin-left: 0;
+                padding-left: 0;
+                border-left: none;
+            }
+
+            .main-container {
+                padding: 24px 16px 60px;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+    {% block stylesheets %}{% endblock %}
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+</head>
+<body>
+    {% if app.user %}
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="{{ path('app_home') }}" class="navbar-brand">
+                <span class="logo">P</span>
+                PDF Converter
+            </a>
             <ul class="navbar-nav">
                 <li><a href="{{ path('app_home') }}" class="{% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}">Accueil</a></li>
-                <li><a href="{{ path('app_pdf_index') }}" class="{% if 'app_pdf' in app.request.attributes.get('_route') %}active{% endif %}">Convertir</a></li>
+                <li><a href="{{ path('app_pdf_index') }}" class="{% if 'app_pdf' in app.request.attributes.get('_route') or 'app_convert' in app.request.attributes.get('_route') %}active{% endif %}">Convertir</a></li>
                 <li><a href="{{ path('app_history') }}" class="{% if 'app_history' in app.request.attributes.get('_route') %}active{% endif %}">Historique</a></li>
                 <li><a href="{{ path('app_contacts') }}" class="{% if 'app_contact' in app.request.attributes.get('_route') %}active{% endif %}">Contacts</a></li>
                 <li><a href="{{ path('app_subscription') }}" class="{% if 'app_subscription' in app.request.attributes.get('_route') %}active{% endif %}">Abonnement</a></li>
-                <li class="user-info">{{ app.user.firstname }} {{ app.user.lastname }}</li>
-                <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
+                <li>
+                    <div class="user-menu">
+                        <span class="user-avatar">{{ app.user.firstname|slice(0,1)|upper }}</span>
+                        <span class="user-name">{{ app.user.firstname }}</span>
+                        <a href="{{ path('app_logout') }}" class="btn btn-sm btn-ghost logout-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                            Déconnexion
+                        </a>
+                    </div>
+                </li>
             </ul>
-        </nav>
-        {% endif %}
+        </div>
+    </nav>
+    {% endif %}
 
-        <main class="container">
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success">{{ message }}</div>
-            {% endfor %}
-            {% for message in app.flashes('error') %}
-                <div class="alert alert-danger">{{ message }}</div>
-            {% endfor %}
-            {% for message in app.flashes('warning') %}
-                <div class="alert alert-warning">{{ message }}</div>
-            {% endfor %}
+    <main class="main-container">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('warning') %}
+            <div class="alert alert-warning">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                {{ message }}
+            </div>
+        {% endfor %}
 
-            {% block body %}{% endblock %}
-        </main>
-    </body>
+        {% block body %}{% endblock %}
+    </main>
+</body>
 </html>

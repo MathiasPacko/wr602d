@@ -1,0 +1,275 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editeur WYSIWYG - PDF Converter{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .editor-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 12px;
+        background: var(--zinc-800);
+        border: 1px solid var(--border-default);
+        border-bottom: none;
+        border-radius: 8px 8px 0 0;
+    }
+    .editor-toolbar button {
+        padding: 8px 10px;
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .editor-toolbar button:hover {
+        background: var(--zinc-700);
+        color: var(--text-primary);
+    }
+    .editor-toolbar button.active {
+        background: var(--accent);
+        color: white;
+    }
+    .editor-toolbar svg {
+        width: 16px;
+        height: 16px;
+    }
+    .editor-toolbar .separator {
+        width: 1px;
+        background: var(--border-default);
+        margin: 0 8px;
+    }
+    .editor-content {
+        min-height: 400px;
+        padding: 20px;
+        background: var(--zinc-900);
+        border: 1px solid var(--border-default);
+        border-radius: 0 0 8px 8px;
+        color: var(--text-primary);
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+    .editor-content:focus {
+        outline: none;
+        border-color: var(--accent);
+    }
+    .editor-content h1 { font-size: 2em; margin: 0.67em 0; }
+    .editor-content h2 { font-size: 1.5em; margin: 0.75em 0; }
+    .editor-content h3 { font-size: 1.17em; margin: 0.83em 0; }
+    .editor-content ul, .editor-content ol { padding-left: 2em; margin: 1em 0; }
+    .editor-content blockquote {
+        border-left: 4px solid var(--accent);
+        margin: 1em 0;
+        padding-left: 1em;
+        color: var(--text-secondary);
+    }
+    .editor-content a { color: var(--accent); }
+    .editor-content table { border-collapse: collapse; width: 100%; }
+    .editor-content th, .editor-content td { border: 1px solid var(--border-default); padding: 8px; }
+
+    .margin-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+    .margin-grid .form-group { margin-bottom: 0; }
+    .margin-grid label { font-size: 0.75rem; color: var(--text-tertiary); }
+    .margin-grid input { text-align: center; padding: 8px 10px; }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <h1>Editeur WYSIWYG</h1>
+    <p>Creez votre document avec un editeur de texte riche</p>
+</div>
+
+<div class="card" style="max-width: 900px;">
+    <div class="flex gap-2 items-center mb-3" style="padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle);">
+        <div class="card-icon" style="margin-bottom: 0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+        </div>
+        <div>
+            <h3 style="font-size: 0.9375rem; font-weight: 600; margin-bottom: 2px;">Editeur visuel</h3>
+            <p class="text-tertiary" style="font-size: 0.8125rem;">Formatez votre texte et exportez en PDF</p>
+        </div>
+    </div>
+
+    <form method="post" data-turbo="false" id="wysiwyg-form">
+        <div class="form-group">
+            <label>Contenu du document</label>
+
+            <div class="editor-toolbar">
+                <button type="button" onclick="execCmd('bold')" title="Gras">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/>
+                        <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/>
+                    </svg>
+                </button>
+                <button type="button" onclick="execCmd('italic')" title="Italique">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="4" x2="10" y2="4"/>
+                        <line x1="14" y1="20" x2="5" y2="20"/>
+                        <line x1="15" y1="4" x2="9" y2="20"/>
+                    </svg>
+                </button>
+                <button type="button" onclick="execCmd('underline')" title="Souligne">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 4v6a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4"/>
+                        <line x1="4" y1="20" x2="20" y2="20"/>
+                    </svg>
+                </button>
+                <button type="button" onclick="execCmd('strikeThrough')" title="Barre">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17.3 4.9c-2.3-.6-4.4-1-6.2-.9-2.7 0-5.3.7-5.3 3.6 0 1.5 1.1 2.4 3 3"/>
+                        <path d="M4 12h16"/>
+                        <path d="M19.7 16.4c0 3.1-2.6 3.6-5.7 3.6-2.2 0-4.4-.5-6.5-1.3"/>
+                    </svg>
+                </button>
+
+                <div class="separator"></div>
+
+                <button type="button" onclick="execCmd('formatBlock', 'h1')" title="Titre 1">H1</button>
+                <button type="button" onclick="execCmd('formatBlock', 'h2')" title="Titre 2">H2</button>
+                <button type="button" onclick="execCmd('formatBlock', 'h3')" title="Titre 3">H3</button>
+                <button type="button" onclick="execCmd('formatBlock', 'p')" title="Paragraphe">P</button>
+
+                <div class="separator"></div>
+
+                <button type="button" onclick="execCmd('insertUnorderedList')" title="Liste a puces">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="8" y1="6" x2="21" y2="6"/>
+                        <line x1="8" y1="12" x2="21" y2="12"/>
+                        <line x1="8" y1="18" x2="21" y2="18"/>
+                        <circle cx="4" cy="6" r="1" fill="currentColor"/>
+                        <circle cx="4" cy="12" r="1" fill="currentColor"/>
+                        <circle cx="4" cy="18" r="1" fill="currentColor"/>
+                    </svg>
+                </button>
+                <button type="button" onclick="execCmd('insertOrderedList')" title="Liste numerotee">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="10" y1="6" x2="21" y2="6"/>
+                        <line x1="10" y1="12" x2="21" y2="12"/>
+                        <line x1="10" y1="18" x2="21" y2="18"/>
+                        <text x="3" y="7" font-size="6" fill="currentColor">1</text>
+                        <text x="3" y="13" font-size="6" fill="currentColor">2</text>
+                        <text x="3" y="19" font-size="6" fill="currentColor">3</text>
+                    </svg>
+                </button>
+
+                <div class="separator"></div>
+
+                <button type="button" onclick="execCmd('justifyLeft')" title="Aligner a gauche">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="12" x2="15" y2="12"/>
+                        <line x1="3" y1="18" x2="18" y2="18"/>
+                    </svg>
+                </button>
+                <button type="button" onclick="execCmd('justifyCenter')" title="Centrer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="6" y1="12" x2="18" y2="12"/>
+                        <line x1="4" y1="18" x2="20" y2="18"/>
+                    </svg>
+                </button>
+                <button type="button" onclick="execCmd('justifyRight')" title="Aligner a droite">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="9" y1="12" x2="21" y2="12"/>
+                        <line x1="6" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+
+                <div class="separator"></div>
+
+                <button type="button" onclick="insertLink()" title="Lien">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                    </svg>
+                </button>
+                <button type="button" onclick="execCmd('formatBlock', 'blockquote')" title="Citation">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z"/>
+                    </svg>
+                </button>
+                <button type="button" onclick="execCmd('removeFormat')" title="Supprimer le formatage">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="editor-content" id="editor" contenteditable="true">
+                <h1>Mon document</h1>
+                <p>Commencez a ecrire votre contenu ici...</p>
+            </div>
+
+            <input type="hidden" name="wysiwyg_content" id="wysiwyg-content">
+        </div>
+
+        <div class="form-group">
+            <label style="margin-bottom: 12px;">Marges (en pouces)</label>
+            <div class="margin-grid">
+                <div class="form-group">
+                    <label for="margin_top">Haut</label>
+                    <input type="text" name="margin_top" id="margin_top" class="form-control" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="margin_bottom">Bas</label>
+                    <input type="text" name="margin_bottom" id="margin_bottom" class="form-control" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="margin_left">Gauche</label>
+                    <input type="text" name="margin_left" id="margin_left" class="form-control" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="margin_right">Droite</label>
+                    <input type="text" name="margin_right" id="margin_right" class="form-control" value="1">
+                </div>
+            </div>
+        </div>
+
+        {{ include('pdf/_email_options.html.twig', { contacts: contacts|default([]) }) }}
+
+        <div class="flex gap-1 mt-3">
+            <button type="submit" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                Generer le PDF
+            </button>
+            <a href="{{ path('app_pdf_index') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+
+<script>
+function execCmd(command, value = null) {
+    document.execCommand(command, false, value);
+    document.getElementById('editor').focus();
+}
+
+function insertLink() {
+    const url = prompt('Entrez l\'URL du lien:');
+    if (url) {
+        execCmd('createLink', url);
+    }
+}
+
+document.getElementById('wysiwyg-form').addEventListener('submit', function(e) {
+    const editor = document.getElementById('editor');
+    document.getElementById('wysiwyg-content').value = editor.innerHTML;
+});
+</script>
+{% endblock %}

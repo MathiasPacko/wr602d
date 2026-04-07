@@ -79,6 +79,56 @@ class GotenbergService
     }
 
     /**
+     * Capture d'écran d'une URL (PNG)
+     */
+    public function screenshotUrl(string $url, array $options = []): string
+    {
+        $formFields = array_merge($options, [
+            'url' => $url,
+        ]);
+
+        return $this->sendRequest('/forms/chromium/screenshot/url', $formFields);
+    }
+
+    /**
+     * Fusionne plusieurs fichiers PDF uploadés en un seul
+     *
+     * @param array $uploadedFiles Tableau de fichiers UploadedFile
+     */
+    public function mergePdfFiles(array $uploadedFiles): string
+    {
+        $formFields = [];
+        foreach ($uploadedFiles as $index => $file) {
+            $formFields["files[{$index}]"] = DataPart::fromPath(
+                $file->getPathname(),
+                sprintf('%d_%s', $index + 1, $file->getClientOriginalName())
+            );
+        }
+
+        return $this->sendRequest('/forms/pdfengines/merge', $formFields);
+    }
+
+    /**
+     * Fusionne plusieurs fichiers PDF par chemin
+     *
+     * @param array $filePaths Tableau de chemins de fichiers PDF
+     */
+    public function mergePdfsByPath(array $filePaths): string
+    {
+        $formFields = [];
+        foreach ($filePaths as $index => $path) {
+            if (file_exists($path)) {
+                $formFields["files[{$index}]"] = DataPart::fromPath(
+                    $path,
+                    sprintf('%d.pdf', $index + 1)
+                );
+            }
+        }
+
+        return $this->sendRequest('/forms/pdfengines/merge', $formFields);
+    }
+
+    /**
      * Vérifie si le service Gotenberg est accessible
      */
     public function healthCheck(): bool

@@ -3,10 +3,13 @@
 {% block title %}Historique - PDF Converter{% endblock %}
 
 {% block body %}
-<h1>Historique des conversions</h1>
+<div class="page-header">
+    <h1>Historique des conversions</h1>
+    <p>Retrouvez toutes vos conversions passées</p>
+</div>
 
 {% if generations|length > 0 %}
-    <div class="card">
+    <div class="table-container">
         <table class="table">
             <thead>
                 <tr>
@@ -18,17 +21,50 @@
             <tbody>
                 {% for generation in generations %}
                 <tr>
-                    <td>{{ generation.createdAt|date('d/m/Y H:i') }}</td>
-                    <td>{{ generation.file }}</td>
+                    <td>
+                        <div class="flex items-center gap-1">
+                            <div style="width: 36px; height: 36px; background: var(--bg-tertiary); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.5">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div style="font-weight: 500; font-size: 0.875rem;">{{ generation.createdAt|date('d/m/Y') }}</div>
+                                <div class="text-tertiary" style="font-size: 0.75rem;">{{ generation.createdAt|date('H:i') }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="text-mono text-secondary" style="font-size: 0.8125rem;">{{ generation.file }}</span>
+                    </td>
                     <td>
                         {% if 'url_' in generation.file %}
-                            <span class="badge badge-info">URL</span>
+                            <span class="badge badge-primary">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                </svg>
+                                URL
+                            </span>
                         {% elseif 'html_' in generation.file %}
-                            <span class="badge badge-success">HTML</span>
+                            <span class="badge badge-success">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="16 18 22 12 16 6"/>
+                                    <polyline points="8 6 2 12 8 18"/>
+                                </svg>
+                                HTML
+                            </span>
                         {% elseif 'office_' in generation.file %}
-                            <span class="badge badge-warning">Office</span>
+                            <span class="badge badge-warning">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                Office
+                            </span>
                         {% else %}
-                            <span class="badge badge-secondary">Autre</span>
+                            <span class="badge badge-neutral">Autre</span>
                         {% endif %}
                     </td>
                 </tr>
@@ -37,11 +73,22 @@
         </table>
     </div>
 {% else %}
-    <div class="card text-center" style="padding: 3rem;">
-        <div style="font-size: 4rem; margin-bottom: 1rem;">📋</div>
-        <h3>Aucune conversion</h3>
-        <p class="text-muted">Vous n'avez pas encore effectué de conversion.</p>
-        <a href="{{ path('app_pdf_index') }}" class="btn btn-primary mt-2">Faire une conversion</a>
+    <div class="card text-center" style="padding: 60px 24px;">
+        <div style="width: 64px; height: 64px; background: var(--bg-tertiary); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+            </svg>
+        </div>
+        <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 6px;">Aucune conversion</h3>
+        <p class="text-secondary mb-3" style="font-size: 0.9375rem;">Vous n'avez pas encore effectué de conversion.</p>
+        <a href="{{ path('app_pdf_index') }}" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Faire une conversion
+        </a>
     </div>
 {% endif %}
 {% endblock %}
