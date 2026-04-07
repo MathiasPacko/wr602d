@@ -1,0 +1,47 @@
+{# Partial pour les options d'envoi par email #}
+<div class="card mt-3" style="background: var(--zinc-800); border-color: var(--zinc-700);">
+    <h4 style="font-size: 0.875rem; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        Options d'envoi par email
+    </h4>
+
+    <div class="form-group" style="margin-bottom: 12px;">
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 400;">
+            <input type="checkbox" name="send_to_me" value="1" style="width: 18px; height: 18px; accent-color: var(--accent);">
+            <span>M'envoyer le {{ file_type|default('PDF') }} par email</span>
+        </label>
+    </div>
+
+    {% if contacts is defined and contacts|length > 0 %}
+        <div class="form-group" style="margin-bottom: 12px;">
+            <label style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 8px; display: block;">
+                Partager avec mes contacts
+            </label>
+            <div style="max-height: 150px; overflow-y: auto; background: var(--zinc-900); border-radius: 8px; padding: 8px;">
+                {% for contact in contacts %}
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px; border-radius: 6px; transition: background 0.15s;" onmouseover="this.style.background='var(--zinc-800)'" onmouseout="this.style.background='transparent'">
+                        <input type="checkbox" name="send_to_contacts[]" value="{{ contact.id }}" style="width: 16px; height: 16px; accent-color: var(--accent);">
+                        <span style="flex: 1;">{{ contact.firstname }} {{ contact.lastname }}</span>
+                        <span class="text-tertiary" style="font-size: 0.75rem;">{{ contact.email }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+            <label for="contact_message" style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 8px; display: block;">
+                Message (optionnel)
+            </label>
+            <textarea name="contact_message" id="contact_message" class="form-control" rows="2"
+                      placeholder="Ajouter un message personnalise..."
+                      style="font-size: 0.875rem; background: var(--zinc-900);"></textarea>
+        </div>
+    {% else %}
+        <p class="text-tertiary" style="font-size: 0.8125rem; margin: 0;">
+            <a href="{{ path('app_contact_add') }}" style="color: var(--accent);">Ajoutez des contacts</a> pour partager vos documents.
+        </p>
+    {% endif %}
+</div>

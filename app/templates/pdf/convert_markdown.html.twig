@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}HTML vers PDF - PDF Converter{% endblock %}
+{% block title %}Markdown vers PDF - PDF Converter{% endblock %}
 
 {% block stylesheets %}
 <style>
@@ -26,47 +26,84 @@
         text-align: center;
         padding: 8px 10px;
     }
+    .syntax-help {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        font-size: 0.8125rem;
+    }
+    .syntax-help code {
+        background: var(--zinc-800);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Geist Mono', monospace;
+    }
 </style>
 {% endblock %}
 
 {% block body %}
 <div class="page-header">
-    <h1>Convertir du HTML en PDF</h1>
-    <p>Collez votre code HTML pour le convertir en document PDF</p>
+    <h1>Convertir du Markdown en PDF</h1>
+    <p>Ecrivez ou collez votre texte Markdown pour le convertir en document PDF</p>
 </div>
 
-<div class="card" style="max-width: 800px;">
+<div class="card" style="max-width: 900px;">
     <div class="flex gap-2 items-center mb-3" style="padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle);">
         <div class="card-icon" style="margin-bottom: 0;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <polyline points="16 18 22 12 16 6"/>
-                <polyline points="8 6 2 12 8 18"/>
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <path d="M14 2v6h6"/>
+                <path d="M16 13H8"/>
+                <path d="M16 17H8"/>
+                <path d="M10 9H8"/>
             </svg>
         </div>
         <div>
-            <h3 style="font-size: 0.9375rem; font-weight: 600; margin-bottom: 2px;">HTML vers PDF</h3>
-            <p class="text-tertiary" style="font-size: 0.8125rem;">Le HTML sera rendu avec CSS et converti en PDF haute qualité</p>
+            <h3 style="font-size: 0.9375rem; font-weight: 600; margin-bottom: 2px;">Markdown vers PDF</h3>
+            <p class="text-tertiary" style="font-size: 0.8125rem;">Le Markdown sera converti en HTML puis en PDF avec mise en forme</p>
         </div>
     </div>
 
     <form method="post" data-turbo="false">
         <div class="form-group">
-            <label for="html_content">Code HTML</label>
-            <textarea name="html_content" id="html_content" class="form-control code-editor" rows="16" required
-                      placeholder="<!DOCTYPE html>
-<html>
-<head>
-    <title>Mon document</title>
-    <style>
-        body { font-family: system-ui, sans-serif; }
-        h1 { color: #1a1a1a; }
-    </style>
-</head>
-<body>
-    <h1>Titre</h1>
-    <p>Contenu de votre document...</p>
-</body>
-</html>"></textarea>
+            <label for="markdown_content">Contenu Markdown</label>
+            <textarea name="markdown_content" id="markdown_content" class="form-control code-editor" rows="18" required
+                      placeholder="# Titre principal
+
+## Sous-titre
+
+Paragraphe de texte avec **gras** et *italique*.
+
+- Element de liste 1
+- Element de liste 2
+- Element de liste 3
+
+### Code
+
+```javascript
+const hello = 'world';
+console.log(hello);
+```
+
+> Citation ou note importante
+
+| Colonne 1 | Colonne 2 |
+|-----------|-----------|
+| Valeur A  | Valeur B  |"></textarea>
+        </div>
+
+        <div class="card mb-3" style="background: var(--zinc-800); padding: 16px;">
+            <h4 style="font-size: 0.8125rem; font-weight: 600; margin-bottom: 12px; color: var(--text-secondary);">Syntaxe Markdown</h4>
+            <div class="syntax-help text-tertiary">
+                <div><code># Titre</code> Titre H1</div>
+                <div><code>## Sous-titre</code> Titre H2</div>
+                <div><code>**gras**</code> Texte en gras</div>
+                <div><code>*italique*</code> Texte en italique</div>
+                <div><code>- item</code> Liste a puces</div>
+                <div><code>1. item</code> Liste numerotee</div>
+                <div><code>`code`</code> Code inline</div>
+                <div><code>> citation</code> Citation</div>
+            </div>
         </div>
 
         <div class="form-group">

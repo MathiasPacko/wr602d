@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document partage</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #007AFF 0%, #0062cc 100%);
+            color: white;
+            padding: 32px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .content {
+            padding: 32px;
+        }
+        .content p {
+            margin: 0 0 16px;
+        }
+        .sender-info {
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .sender-info strong {
+            color: #1565c0;
+        }
+        .message-box {
+            background: #f8f9fa;
+            border-left: 4px solid #007AFF;
+            padding: 16px;
+            margin: 16px 0;
+            font-style: italic;
+            color: #555;
+        }
+        .file-info {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .file-icon {
+            width: 48px;
+            height: 48px;
+            background: #dc3545;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .file-details {
+            flex: 1;
+        }
+        .file-name {
+            font-weight: 600;
+            margin: 0 0 4px;
+        }
+        .file-type {
+            font-size: 13px;
+            color: #666;
+            margin: 0;
+        }
+        .footer {
+            background: #f9f9f9;
+            padding: 24px 32px;
+            font-size: 13px;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Document partage</h1>
+        </div>
+        <div class="content">
+            <p>Bonjour {{ contact.firstname }},</p>
+
+            <div class="sender-info">
+                <strong>{{ sender.firstname }} {{ sender.lastname }}</strong> vous a envoye un document PDF.
+            </div>
+
+            {% if message %}
+                <p>Message de l'expediteur :</p>
+                <div class="message-box">
+                    {{ message }}
+                </div>
+            {% endif %}
+
+            <div class="file-info">
+                <div class="file-icon">PDF</div>
+                <div class="file-details">
+                    <p class="file-name">{{ filename }}</p>
+                    <p class="file-type">Document PDF</p>
+                </div>
+            </div>
+
+            <p>Vous trouverez le document en piece jointe de cet email.</p>
+        </div>
+        <div class="footer">
+            <p>Ce document vous a ete envoye via PDF Converter.</p>
+            <p>Pour repondre a l'expediteur, utilisez simplement la fonction "Repondre" de votre messagerie.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -4,75 +4,459 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - PDF Converter</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23007AFF%22 width=%22100%22 height=%22100%22 rx=%2222%22/><text y=%22.9em%22 x=%2250%22 text-anchor=%22middle%22 font-size=%2255%22 fill=%22white%22>P</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --zinc-950: #09090b;
+            --zinc-900: #18181b;
+            --zinc-800: #27272a;
+            --zinc-700: #3f3f46;
+            --zinc-600: #52525b;
+            --zinc-500: #71717a;
+            --zinc-400: #a1a1aa;
+            --zinc-300: #d4d4d8;
+            --zinc-200: #e4e4e7;
+            --zinc-100: #f4f4f5;
+            --zinc-50: #fafafa;
+            --accent: #007AFF;
+            --accent-hover: #0062cc;
+            --accent-subtle: rgba(0, 122, 255, 0.08);
+            --danger: #dc2626;
+            --danger-subtle: rgba(220, 38, 38, 0.1);
+            --success: #16a34a;
+            --success-subtle: rgba(22, 163, 74, 0.1);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .login-container { background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); width: 100%; max-width: 400px; }
-        .login-header { text-align: center; margin-bottom: 2rem; }
-        .login-header h1 { color: #2c3e50; font-size: 1.75rem; margin-bottom: 0.5rem; }
-        .login-header p { color: #7f8c8d; }
-        .form-group { margin-bottom: 1.25rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333; }
-        .form-control { width: 100%; padding: 0.875rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; }
-        .form-control:focus { outline: none; border-color: #667eea; }
-        .btn { width: 100%; padding: 0.875rem; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.2s; }
-        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: 600; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
-        .checkbox-group { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; }
-        .checkbox-group input { width: 18px; height: 18px; }
-        .checkbox-group label { margin: 0; font-weight: normal; color: #666; }
-        .links { text-align: center; margin-top: 1.5rem; }
-        .links a { color: #667eea; text-decoration: none; font-size: 0.9rem; }
-        .links a:hover { text-decoration: underline; }
-        .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
-        .alert-danger { background: #fee; color: #c00; border: 1px solid #fcc; }
-        .alert-success { background: #efe; color: #060; border: 1px solid #cfc; }
-        .divider { text-align: center; margin: 1.5rem 0; color: #999; position: relative; }
-        .divider::before, .divider::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: #ddd; }
-        .divider::before { left: 0; }
-        .divider::after { right: 0; }
+
+        html {
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            background: var(--zinc-50);
+            color: var(--zinc-900);
+        }
+
+        /* Left Panel - Brand */
+        .brand-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 48px;
+            position: relative;
+            background: var(--zinc-100);
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .brand-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 2rem;
+            color: white;
+            margin: 0 auto 32px;
+        }
+
+        .brand-title {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 12px;
+        }
+
+        .brand-subtitle {
+            font-size: 1.0625rem;
+            color: var(--zinc-600);
+            line-height: 1.6;
+            margin-bottom: 48px;
+        }
+
+        .features {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+        }
+
+        .feature {
+            text-align: center;
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            border: 1px solid var(--zinc-200);
+        }
+
+        .feature-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--accent);
+        }
+
+        .feature-text {
+            font-size: 0.8125rem;
+            color: var(--zinc-600);
+        }
+
+        /* Right Panel - Form */
+        .form-panel {
+            width: 480px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 48px;
+            background: white;
+            border-left: 1px solid var(--zinc-200);
+        }
+
+        .form-container {
+            max-width: 360px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .form-header {
+            margin-bottom: 32px;
+        }
+
+        .form-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+
+        .form-header p {
+            font-size: 0.9375rem;
+            color: var(--zinc-600);
+        }
+
+        .alert {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        .alert-danger {
+            background: var(--danger-subtle);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .alert-success {
+            background: var(--success-subtle);
+            color: var(--success);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--zinc-600);
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: var(--zinc-400);
+            pointer-events: none;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px 12px 44px;
+            background: var(--zinc-50);
+            border: 1px solid var(--zinc-200);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.9375rem;
+            color: var(--zinc-900);
+            transition: all 150ms ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-subtle);
+        }
+
+        .form-control::placeholder {
+            color: var(--zinc-400);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper label {
+            font-size: 0.875rem;
+            color: var(--zinc-600);
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .forgot-link {
+            font-size: 0.875rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 150ms;
+        }
+
+        .forgot-link:hover {
+            opacity: 0.8;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 150ms ease;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 28px 0;
+            color: var(--zinc-400);
+            font-size: 0.8125rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--zinc-200);
+        }
+
+        .divider span {
+            padding: 0 16px;
+        }
+
+        .register-link {
+            text-align: center;
+            font-size: 0.9375rem;
+            color: var(--zinc-600);
+        }
+
+        .register-link a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1024px) {
+            .brand-panel { display: none; }
+            .form-panel {
+                width: 100%;
+                border-left: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-panel {
+                padding: 32px 24px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <h1>PDF Converter</h1>
-            <p>Connectez-vous à votre compte</p>
+    <div class="brand-panel">
+        <div class="brand-content">
+            <div class="brand-logo">P</div>
+            <h1 class="brand-title">PDF Converter</h1>
+            <p class="brand-subtitle">
+                Convertissez vos documents en PDF en quelques secondes.
+                Simple, rapide et sécurisé.
+            </p>
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                        </svg>
+                    </div>
+                    <div class="feature-text">URL vers PDF</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <polyline points="16 18 22 12 16 6"/>
+                            <polyline points="8 6 2 12 8 18"/>
+                        </svg>
+                    </div>
+                    <div class="feature-text">HTML vers PDF</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                    </div>
+                    <div class="feature-text">Office vers PDF</div>
+                </div>
+            </div>
         </div>
+    </div>
 
-        {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
-
-        {% for message in app.flashes('success') %}
-            <div class="alert alert-success">{{ message }}</div>
-        {% endfor %}
-
-        <form method="post" data-turbo="false">
-            <div class="form-group">
-                <label for="username">Email</label>
-                <input type="email" id="username" name="_username" class="form-control" value="{{ last_username }}" required autofocus placeholder="votre@email.com">
+    <div class="form-panel">
+        <div class="form-container">
+            <div class="form-header">
+                <h1>Bon retour</h1>
+                <p>Connectez-vous pour accéder à votre espace</p>
             </div>
 
-            <div class="form-group">
-                <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="_password" class="form-control" required placeholder="Votre mot de passe">
-            </div>
+            {% if error %}
+                <div class="alert alert-danger">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
 
-            <div class="checkbox-group">
-                <input type="checkbox" id="remember_me" name="_remember_me">
-                <label for="remember_me">Se souvenir de moi</label>
-            </div>
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    {{ message }}
+                </div>
+            {% endfor %}
 
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            <form method="post" data-turbo="false">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <div class="input-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        <input type="email" id="email" name="_username" class="form-control"
+                               value="{{ last_username }}" required autofocus placeholder="votre@email.com">
+                    </div>
+                </div>
 
-            <button type="submit" class="btn btn-primary">Se connecter</button>
-        </form>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <div class="input-wrapper">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        <input type="password" id="password" name="_password" class="form-control"
+                               required placeholder="Votre mot de passe">
+                    </div>
+                </div>
 
-        <div class="links">
-            <a href="{{ path('app_forgot_password') }}">Mot de passe oublié ?</a>
-            <div class="divider">ou</div>
-            <a href="{{ path('app_register') }}">Créer un compte</a>
+                <div class="form-options">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="remember_me" name="_remember_me">
+                        <label for="remember_me">Se souvenir de moi</label>
+                    </div>
+                    <a href="{{ path('app_forgot_password') }}" class="forgot-link">Mot de passe oublié ?</a>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button type="submit" class="btn btn-primary">Se connecter</button>
+            </form>
+
+            <div class="divider"><span>ou</span></div>
+
+            <p class="register-link">
+                Pas encore de compte ? <a href="{{ path('app_register') }}">Créer un compte</a>
+            </p>
         </div>
     </div>
 </body>

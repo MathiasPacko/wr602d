@@ -5,6 +5,11 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     gotenberg_url: '%env(GOTENBERG_URL)%'
+    mailer_from_email: '%env(MAILER_FROM_EMAIL)%'
+    mailer_from_name: '%env(MAILER_FROM_NAME)%'
+    stripe_public_key: '%env(STRIPE_PUBLIC_KEY)%'
+    stripe_secret_key: '%env(STRIPE_SECRET_KEY)%'
+    stripe_webhook_secret: '%env(STRIPE_WEBHOOK_SECRET)%'
 
 services:
     # default configuration for services in *this* file
@@ -27,3 +32,8 @@ services:
     App\Service\GotenbergService:
         arguments:
             $gotenbergUrl: '%gotenberg_url%'
+
+    App\Service\MailerService:
+        arguments:
+            $mailerFromEmail: '%mailer_from_email%'
+            $mailerFromName: '%mailer_from_name%'

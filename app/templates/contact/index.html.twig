@@ -3,34 +3,62 @@
 {% block title %}Mes contacts - PDF Converter{% endblock %}
 
 {% block body %}
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-    <h1>Mes contacts</h1>
-    <a href="{{ path('app_contact_add') }}" class="btn btn-primary">+ Ajouter un contact</a>
+<div class="flex-between mb-4">
+    <div class="page-header" style="margin-bottom: 0;">
+        <h1>Mes contacts</h1>
+        <p>Gérez vos destinataires pour les partages de PDF</p>
+    </div>
+    <a href="{{ path('app_contact_add') }}" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Ajouter
+    </a>
 </div>
 
 {% if contacts|length > 0 %}
-    <div class="card">
+    <div class="table-container">
         <table class="table">
             <thead>
                 <tr>
-                    <th>Nom</th>
-                    <th>Prénom</th>
+                    <th>Contact</th>
                     <th>Email</th>
-                    <th style="width: 150px;">Actions</th>
+                    <th style="width: 140px; text-align: right;">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for contact in contacts %}
                 <tr>
-                    <td>{{ contact.lastname }}</td>
-                    <td>{{ contact.firstname }}</td>
-                    <td>{{ contact.email }}</td>
                     <td>
-                        <a href="{{ path('app_contact_edit', {id: contact.id}) }}" class="btn btn-secondary btn-sm">Modifier</a>
-                        <form method="post" action="{{ path('app_contact_delete', {id: contact.id}) }}" style="display: inline;" data-turbo="false" onsubmit="return confirm('Supprimer ce contact ?');">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete_contact_' ~ contact.id) }}">
-                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
-                        </form>
+                        <div class="flex items-center gap-1">
+                            <div style="width: 36px; height: 36px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.75rem; color: white;">
+                                {{ contact.firstname|slice(0,1)|upper }}
+                            </div>
+                            <span style="font-weight: 500;">{{ contact.firstname }} {{ contact.lastname }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="text-secondary">{{ contact.email }}</span>
+                    </td>
+                    <td class="text-right">
+                        <div class="flex gap-1" style="justify-content: flex-end;">
+                            <a href="{{ path('app_contact_edit', {id: contact.id}) }}" class="btn btn-secondary btn-sm btn-icon" title="Modifier">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </a>
+                            <form method="post" action="{{ path('app_contact_delete', {id: contact.id}) }}" style="display: inline;" data-turbo="false" onsubmit="return confirm('Supprimer ce contact ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_contact_' ~ contact.id) }}">
+                                <button type="submit" class="btn btn-danger btn-sm btn-icon" title="Supprimer">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"/>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}
@@ -38,11 +66,24 @@
         </table>
     </div>
 {% else %}
-    <div class="card text-center" style="padding: 3rem;">
-        <div style="font-size: 4rem; margin-bottom: 1rem;">👥</div>
-        <h3>Aucun contact</h3>
-        <p class="text-muted">Vous n'avez pas encore ajouté de contacts.</p>
-        <a href="{{ path('app_contact_add') }}" class="btn btn-primary mt-2">Ajouter un contact</a>
+    <div class="card text-center" style="padding: 60px 24px;">
+        <div style="width: 64px; height: 64px; background: var(--bg-tertiary); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="1.5">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+        </div>
+        <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 6px;">Aucun contact</h3>
+        <p class="text-secondary mb-3" style="font-size: 0.9375rem;">Vous n'avez pas encore ajouté de contacts.</p>
+        <a href="{{ path('app_contact_add') }}" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Ajouter un contact
+        </a>
     </div>
 {% endif %}
 {% endblock %}
