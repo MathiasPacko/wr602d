@@ -1,0 +1,202 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Abonnement - PDF Converter{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .plan-card {
+        position: relative;
+        text-align: center;
+    }
+    .plan-badge {
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 4px 14px;
+        border-radius: 100px;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+    }
+    .plan-badge.current {
+        background: var(--success);
+        color: white;
+    }
+    .plan-badge.recommended {
+        background: var(--accent);
+        color: white;
+    }
+    .plan-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        margin-bottom: 16px;
+        margin-top: 8px;
+    }
+    .plan-price {
+        font-size: 2.5rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1;
+        margin-bottom: 4px;
+    }
+    .plan-price-old {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+        font-size: 1rem;
+        margin-bottom: 4px;
+    }
+    .plan-price span {
+        font-size: 0.875rem;
+        font-weight: 400;
+        color: var(--text-secondary);
+    }
+    .plan-features {
+        list-style: none;
+        text-align: left;
+        margin: 24px 0;
+        padding: 0;
+    }
+    .plan-features li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border-subtle);
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+    .plan-features li:last-child {
+        border-bottom: none;
+    }
+    .plan-features .check {
+        width: 18px;
+        height: 18px;
+        background: var(--success-subtle);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .plan-features .check svg {
+        width: 10px;
+        height: 10px;
+        color: var(--success);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <h1>Choisir votre abonnement</h1>
+    <p>Sélectionnez le plan qui correspond à vos besoins</p>
+</div>
+
+<div class="grid grid-3">
+    {% for plan in plans %}
+    <div class="card plan-card {% if plan.name == 'PREMIUM' %}card-accent{% endif %} {% if current_plan and current_plan.id == plan.id %}{% endif %}" style="{% if current_plan and current_plan.id == plan.id %}border-color: var(--success);{% endif %}">
+
+        {% if current_plan and current_plan.id == plan.id %}
+            <span class="plan-badge current">Plan actuel</span>
+        {% elseif plan.name == 'PREMIUM' %}
+            <span class="plan-badge recommended">Recommandé</span>
+        {% endif %}
+
+        <h2 class="plan-name">{{ plan.name }}</h2>
+
+        <div style="margin-bottom: 20px;">
+            {% if plan.specialPrice and plan.specialPriceFrom <= date() and plan.specialPriceTo >= date() %}
+                <div class="plan-price-old">{{ plan.price|number_format(2, ',', ' ') }} €</div>
+                <div class="plan-price text-accent">
+                    {{ plan.specialPrice|number_format(2, ',', ' ') }} <span>€/mois</span>
+                </div>
+            {% else %}
+                <div class="plan-price {% if plan.price == 0 %}text-success{% endif %}">
+                    {% if plan.price == 0 %}
+                        Gratuit
+                    {% else %}
+                        {{ plan.price|number_format(2, ',', ' ') }} <span>€/mois</span>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <ul class="plan-features">
+            <li>
+                <span class="check">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </span>
+                {% if plan.limitGeneration == -1 %}
+                    Conversions <strong class="text-accent">illimitées</strong>
+                {% else %}
+                    <strong>{{ plan.limitGeneration }}</strong> conversions / jour
+                {% endif %}
+            </li>
+            <li>
+                <span class="check">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </span>
+                Conversion URL vers PDF
+            </li>
+            <li>
+                <span class="check">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </span>
+                Conversion HTML vers PDF
+            </li>
+            <li>
+                <span class="check">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </span>
+                Conversion Office vers PDF
+            </li>
+            {% if plan.name != 'FREE' %}
+            <li>
+                <span class="check">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </span>
+                Support prioritaire
+            </li>
+            {% endif %}
+        </ul>
+
+        {% if plan.description %}
+            <p class="text-tertiary mb-3" style="font-size: 0.8125rem;">{{ plan.description }}</p>
+        {% endif %}
+
+        {% if current_plan and current_plan.id == plan.id %}
+            <button class="btn btn-secondary btn-full" disabled>Plan actuel</button>
+        {% elseif plan.price == 0 %}
+            <form method="post" action="{{ path('app_subscription_change', {id: plan.id}) }}" data-turbo="false">
+                <input type="hidden" name="_token" value="{{ csrf_token('change_plan_' ~ plan.id) }}">
+                <button type="submit" class="btn btn-secondary btn-full">
+                    Choisir ce plan
+                </button>
+            </form>
+        {% else %}
+            <a href="{{ path('app_payment_checkout', {planId: plan.id}) }}" class="btn {% if plan.name == 'PREMIUM' %}btn-primary{% else %}btn-secondary{% endif %} btn-full">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                    <line x1="1" y1="10" x2="23" y2="10"/>
+                </svg>
+                Souscrire avec Stripe
+            </a>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

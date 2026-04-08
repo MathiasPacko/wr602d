@@ -1,0 +1,145 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Markdown vers PDF - PDF Converter{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .code-editor {
+        font-family: 'Geist Mono', 'SF Mono', Monaco, monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        tab-size: 2;
+    }
+    .margin-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+    .margin-grid .form-group {
+        margin-bottom: 0;
+    }
+    .margin-grid label {
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+    }
+    .margin-grid input {
+        text-align: center;
+        padding: 8px 10px;
+    }
+    .syntax-help {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        font-size: 0.8125rem;
+    }
+    .syntax-help code {
+        background: var(--zinc-800);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Geist Mono', monospace;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <h1>Convertir du Markdown en PDF</h1>
+    <p>Ecrivez ou collez votre texte Markdown pour le convertir en document PDF</p>
+</div>
+
+<div class="card" style="max-width: 900px;">
+    <div class="flex gap-2 items-center mb-3" style="padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle);">
+        <div class="card-icon" style="margin-bottom: 0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <path d="M14 2v6h6"/>
+                <path d="M16 13H8"/>
+                <path d="M16 17H8"/>
+                <path d="M10 9H8"/>
+            </svg>
+        </div>
+        <div>
+            <h3 style="font-size: 0.9375rem; font-weight: 600; margin-bottom: 2px;">Markdown vers PDF</h3>
+            <p class="text-tertiary" style="font-size: 0.8125rem;">Le Markdown sera converti en HTML puis en PDF avec mise en forme</p>
+        </div>
+    </div>
+
+    <form method="post" data-turbo="false">
+        <div class="form-group">
+            <label for="markdown_content">Contenu Markdown</label>
+            <textarea name="markdown_content" id="markdown_content" class="form-control code-editor" rows="18" required
+                      placeholder="# Titre principal
+
+## Sous-titre
+
+Paragraphe de texte avec **gras** et *italique*.
+
+- Element de liste 1
+- Element de liste 2
+- Element de liste 3
+
+### Code
+
+```javascript
+const hello = 'world';
+console.log(hello);
+```
+
+> Citation ou note importante
+
+| Colonne 1 | Colonne 2 |
+|-----------|-----------|
+| Valeur A  | Valeur B  |"></textarea>
+        </div>
+
+        <div class="card mb-3" style="background: var(--zinc-800); padding: 16px;">
+            <h4 style="font-size: 0.8125rem; font-weight: 600; margin-bottom: 12px; color: var(--text-secondary);">Syntaxe Markdown</h4>
+            <div class="syntax-help text-tertiary">
+                <div><code># Titre</code> Titre H1</div>
+                <div><code>## Sous-titre</code> Titre H2</div>
+                <div><code>**gras**</code> Texte en gras</div>
+                <div><code>*italique*</code> Texte en italique</div>
+                <div><code>- item</code> Liste a puces</div>
+                <div><code>1. item</code> Liste numerotee</div>
+                <div><code>`code`</code> Code inline</div>
+                <div><code>> citation</code> Citation</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label style="margin-bottom: 12px;">Marges (en pouces)</label>
+            <div class="margin-grid">
+                <div class="form-group">
+                    <label for="margin_top">Haut</label>
+                    <input type="text" name="margin_top" id="margin_top" class="form-control" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="margin_bottom">Bas</label>
+                    <input type="text" name="margin_bottom" id="margin_bottom" class="form-control" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="margin_left">Gauche</label>
+                    <input type="text" name="margin_left" id="margin_left" class="form-control" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="margin_right">Droite</label>
+                    <input type="text" name="margin_right" id="margin_right" class="form-control" value="1">
+                </div>
+            </div>
+        </div>
+
+        {{ include('pdf/_email_options.html.twig', { contacts: contacts|default([]) }) }}
+
+        <div class="flex gap-1 mt-3">
+            <button type="submit" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                Generer le PDF
+            </button>
+            <a href="{{ path('app_pdf_index') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

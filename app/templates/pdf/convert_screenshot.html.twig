@@ -1,0 +1,142 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Capture d'ecran - PDF Converter{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .resolution-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    .resolution-grid .form-group {
+        margin-bottom: 0;
+    }
+    .preset-btns {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+    }
+    .preset-btn {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+        background: var(--zinc-800);
+        border: 1px solid var(--border-default);
+        border-radius: 6px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .preset-btn:hover {
+        background: var(--zinc-700);
+        color: var(--text-primary);
+    }
+    .preview-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        background: var(--zinc-800);
+        border-radius: 8px;
+        margin-top: 12px;
+    }
+    .preview-info svg {
+        width: 16px;
+        height: 16px;
+        color: var(--accent);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <h1>Capture d'ecran d'URL</h1>
+    <p>Capturez une page web en image PNG haute qualite</p>
+</div>
+
+<div class="card" style="max-width: 600px;">
+    <div class="flex gap-2 items-center mb-3" style="padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle);">
+        <div class="card-icon" style="margin-bottom: 0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+            </svg>
+        </div>
+        <div>
+            <h3 style="font-size: 0.9375rem; font-weight: 600; margin-bottom: 2px;">Capture d'ecran</h3>
+            <p class="text-tertiary" style="font-size: 0.8125rem;">La page sera rendue et capturee en PNG</p>
+        </div>
+    </div>
+
+    <form method="post" data-turbo="false">
+        <div class="form-group">
+            <label for="url">URL de la page</label>
+            <input type="url" name="url" id="url" class="form-control" required
+                   placeholder="https://exemple.com">
+        </div>
+
+        <div class="form-group">
+            <label style="margin-bottom: 12px;">Resolution (en pixels)</label>
+            <div class="resolution-grid">
+                <div class="form-group">
+                    <label for="width" class="text-tertiary" style="font-size: 0.75rem;">Largeur</label>
+                    <input type="number" name="width" id="width" class="form-control" value="1920" min="320" max="3840">
+                </div>
+                <div class="form-group">
+                    <label for="height" class="text-tertiary" style="font-size: 0.75rem;">Hauteur</label>
+                    <input type="number" name="height" id="height" class="form-control" value="1080" min="240" max="2160">
+                </div>
+            </div>
+            <div class="preset-btns">
+                <button type="button" class="preset-btn" onclick="setResolution(1920, 1080)">Full HD (1920x1080)</button>
+                <button type="button" class="preset-btn" onclick="setResolution(1280, 720)">HD (1280x720)</button>
+                <button type="button" class="preset-btn" onclick="setResolution(390, 844)">iPhone 14</button>
+                <button type="button" class="preset-btn" onclick="setResolution(1024, 768)">Tablette</button>
+            </div>
+        </div>
+
+        <div class="preview-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="16" x2="12" y2="12"/>
+                <line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+            <span class="text-secondary" style="font-size: 0.8125rem;">
+                La capture sera enregistree au format PNG
+            </span>
+        </div>
+
+        <div class="card mt-3" style="background: var(--zinc-800); border-color: var(--zinc-700); padding: 16px;">
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 400;">
+                <input type="checkbox" name="send_to_me" value="1" style="width: 18px; height: 18px; accent-color: var(--accent);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                <span>M'envoyer la capture par email</span>
+            </label>
+        </div>
+
+        <div class="flex gap-1 mt-3">
+            <button type="submit" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                Capturer
+            </button>
+            <a href="{{ path('app_pdf_index') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+
+<script>
+function setResolution(width, height) {
+    document.getElementById('width').value = width;
+    document.getElementById('height').value = height;
+}
+</script>
+{% endblock %}

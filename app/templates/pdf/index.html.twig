@@ -1,0 +1,370 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Convertir - PDF Converter{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .card-locked {
+        position: relative;
+        opacity: 0.7;
+    }
+    .card-locked::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.02);
+        border-radius: inherit;
+        pointer-events: none;
+    }
+    .lock-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: var(--zinc-700);
+        color: var(--zinc-300);
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+    .lock-badge svg {
+        width: 12px;
+        height: 12px;
+    }
+    .btn-locked {
+        background: var(--zinc-700) !important;
+        border-color: var(--zinc-600) !important;
+        cursor: not-allowed !important;
+    }
+    .btn-locked:hover {
+        background: var(--zinc-700) !important;
+        transform: none !important;
+    }
+    .quota-bar {
+        background: var(--bg-tertiary);
+        border-radius: 100px;
+        height: 6px;
+        overflow: hidden;
+        margin-top: 8px;
+    }
+    .quota-bar-fill {
+        background: var(--accent);
+        height: 100%;
+        transition: width 0.3s ease;
+    }
+    .quota-bar-fill.warning {
+        background: var(--warning);
+    }
+    .quota-bar-fill.danger {
+        background: var(--danger);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <h1>Convertir en PDF</h1>
+    <p>Choisissez le type de conversion que vous souhaitez effectuer</p>
+</div>
+
+<div class="flex gap-2 mb-3">
+    <div class="card" style="padding: 16px 20px; flex: 1;">
+        <div class="status-indicator">
+            <span class="status-dot {% if gotenberg_status %}online{% else %}offline{% endif %}"></span>
+            <span class="text-secondary" style="font-size: 0.875rem;">Service Gotenberg</span>
+            {% if gotenberg_status %}
+                <span class="badge badge-success">En ligne</span>
+            {% else %}
+                <span class="badge badge-danger">Hors ligne</span>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if app.user and quota_info %}
+        <div class="card" style="padding: 16px 20px; min-width: 220px;">
+            <div class="flex-between">
+                <span class="text-secondary" style="font-size: 0.875rem;">Quota du jour</span>
+                {% if quota_info.unlimited %}
+                    <span class="badge badge-primary">Illimite</span>
+                {% else %}
+                    <span style="font-weight: 600;">{{ quota_info.used }} / {{ quota_info.limit }}</span>
+                {% endif %}
+            </div>
+            {% if not quota_info.unlimited %}
+                {% set percentage = (quota_info.used / quota_info.limit * 100)|round %}
+                <div class="quota-bar">
+                    <div class="quota-bar-fill {% if percentage >= 90 %}danger{% elseif percentage >= 70 %}warning{% endif %}" style="width: {{ percentage }}%;"></div>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<div class="grid grid-3">
+    {# URL vers PDF - FREE #}
+    {% set can_url = can_access_feature('url') %}
+    <div class="card {% if not can_url %}card-locked{% endif %}">
+        {% if not can_url %}
+            <span class="lock-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                {{ get_minimum_plan('url') }}
+            </span>
+        {% endif %}
+        <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+        </div>
+        <h3 class="card-title">URL vers PDF</h3>
+        <p class="card-description mb-3">Convertissez n'importe quelle page web en document PDF haute qualite.</p>
+        {% if can_url %}
+            <a href="{{ path('app_convert_url') }}" class="btn btn-primary btn-full">Convertir une URL</a>
+        {% else %}
+            <a href="{{ path('app_subscription') }}" class="btn btn-locked btn-full">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                Mettre a niveau
+            </a>
+        {% endif %}
+    </div>
+
+    {# HTML vers PDF - FREE #}
+    {% set can_html = can_access_feature('html') %}
+    <div class="card {% if not can_html %}card-locked{% endif %}">
+        {% if not can_html %}
+            <span class="lock-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                {{ get_minimum_plan('html') }}
+            </span>
+        {% endif %}
+        <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <polyline points="16 18 22 12 16 6"/>
+                <polyline points="8 6 2 12 8 18"/>
+            </svg>
+        </div>
+        <h3 class="card-title">HTML vers PDF</h3>
+        <p class="card-description mb-3">Convertissez du code HTML personnalise en document PDF.</p>
+        {% if can_html %}
+            <a href="{{ path('app_convert_html') }}" class="btn btn-primary btn-full">Convertir du HTML</a>
+        {% else %}
+            <a href="{{ path('app_subscription') }}" class="btn btn-locked btn-full">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                Mettre a niveau
+            </a>
+        {% endif %}
+    </div>
+
+    {# Office vers PDF - BASIC #}
+    {% set can_office = can_access_feature('office') %}
+    <div class="card {% if not can_office %}card-locked{% endif %}">
+        {% if not can_office %}
+            <span class="lock-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                {{ get_minimum_plan('office') }}
+            </span>
+        {% endif %}
+        <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+        </div>
+        <h3 class="card-title">Office vers PDF</h3>
+        <p class="card-description mb-3">Convertissez vos fichiers Word, Excel ou PowerPoint en PDF.</p>
+        {% if can_office %}
+            <a href="{{ path('app_convert_office') }}" class="btn btn-primary btn-full">Convertir un fichier</a>
+        {% else %}
+            <a href="{{ path('app_subscription') }}" class="btn btn-locked btn-full">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                Mettre a niveau
+            </a>
+        {% endif %}
+    </div>
+
+    {# Markdown vers PDF - BASIC #}
+    {% set can_markdown = can_access_feature('markdown') %}
+    <div class="card {% if not can_markdown %}card-locked{% endif %}">
+        {% if not can_markdown %}
+            <span class="lock-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                {{ get_minimum_plan('markdown') }}
+            </span>
+        {% endif %}
+        <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <path d="M14 2v6h6"/>
+                <path d="M16 13H8"/>
+                <path d="M16 17H8"/>
+                <path d="M10 9H8"/>
+            </svg>
+        </div>
+        <h3 class="card-title">Markdown vers PDF</h3>
+        <p class="card-description mb-3">Convertissez vos fichiers Markdown en documents PDF styles.</p>
+        {% if can_markdown %}
+            <a href="{{ path('app_convert_markdown') }}" class="btn btn-primary btn-full">Convertir du Markdown</a>
+        {% else %}
+            <a href="{{ path('app_subscription') }}" class="btn btn-locked btn-full">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                Mettre a niveau
+            </a>
+        {% endif %}
+    </div>
+
+    {# Fusionner des PDF - PREMIUM #}
+    {% set can_merge = can_access_feature('merge') %}
+    <div class="card {% if not can_merge %}card-locked{% endif %}">
+        {% if not can_merge %}
+            <span class="lock-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                {{ get_minimum_plan('merge') }}
+            </span>
+        {% endif %}
+        <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                <line x1="12" y1="11" x2="12" y2="17"/>
+                <line x1="9" y1="14" x2="15" y2="14"/>
+            </svg>
+        </div>
+        <h3 class="card-title">Fusionner des PDF</h3>
+        <p class="card-description mb-3">Combinez plusieurs fichiers PDF en un seul document.</p>
+        {% if can_merge %}
+            <a href="{{ path('app_convert_merge') }}" class="btn btn-primary btn-full">Fusionner</a>
+        {% else %}
+            <a href="{{ path('app_subscription') }}" class="btn btn-locked btn-full">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                Mettre a niveau
+            </a>
+        {% endif %}
+    </div>
+
+    {# Capture d'ecran - PREMIUM #}
+    {% set can_screenshot = can_access_feature('screenshot') %}
+    <div class="card {% if not can_screenshot %}card-locked{% endif %}">
+        {% if not can_screenshot %}
+            <span class="lock-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                {{ get_minimum_plan('screenshot') }}
+            </span>
+        {% endif %}
+        <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+            </svg>
+        </div>
+        <h3 class="card-title">Capture d'ecran</h3>
+        <p class="card-description mb-3">Capturez une page web en image PNG haute qualite.</p>
+        {% if can_screenshot %}
+            <a href="{{ path('app_convert_screenshot') }}" class="btn btn-primary btn-full">Capturer</a>
+        {% else %}
+            <a href="{{ path('app_subscription') }}" class="btn btn-locked btn-full">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                Mettre a niveau
+            </a>
+        {% endif %}
+    </div>
+
+    {# Editeur WYSIWYG - PREMIUM #}
+    {% set can_wysiwyg = can_access_feature('wysiwyg') %}
+    <div class="card {% if not can_wysiwyg %}card-locked{% endif %}">
+        {% if not can_wysiwyg %}
+            <span class="lock-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                {{ get_minimum_plan('wysiwyg') }}
+            </span>
+        {% endif %}
+        <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+        </div>
+        <h3 class="card-title">Editeur WYSIWYG</h3>
+        <p class="card-description mb-3">Creez votre document avec un editeur de texte riche.</p>
+        {% if can_wysiwyg %}
+            <a href="{{ path('app_convert_wysiwyg') }}" class="btn btn-primary btn-full">Ouvrir l'editeur</a>
+        {% else %}
+            <a href="{{ path('app_subscription') }}" class="btn btn-locked btn-full">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+                Mettre a niveau
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card mt-3" style="border-color: var(--zinc-700);">
+    <div class="flex gap-2 items-center">
+        <div class="card-icon" style="margin-bottom: 0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="16" x2="12" y2="12"/>
+                <line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+        </div>
+        <div>
+            <h3 style="font-size: 0.9375rem; font-weight: 600; margin-bottom: 2px;">Astuce</h3>
+            <p class="text-secondary" style="font-size: 0.875rem;">
+                Vos conversions sont automatiquement sauvegardees dans votre
+                <a href="{{ path('app_history') }}" style="color: var(--accent); text-decoration: none; font-weight: 500;">historique</a>.
+                {% if app.user and get_user_plan_name() != 'PREMIUM' %}
+                    <a href="{{ path('app_subscription') }}" style="color: var(--accent); text-decoration: none; font-weight: 500;">Passez a Premium</a> pour debloquer tous les outils.
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

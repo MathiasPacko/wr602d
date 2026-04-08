@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Office vers PDF - PDF Converter{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .upload-zone {
+        position: relative;
+        border: 2px dashed var(--border-default);
+        border-radius: var(--radius-lg);
+        padding: 40px 24px;
+        text-align: center;
+        transition: all var(--transition-base);
+        cursor: pointer;
+    }
+    .upload-zone:hover,
+    .upload-zone.dragover {
+        border-color: var(--accent);
+        background: var(--accent-subtle);
+    }
+    .upload-zone input[type="file"] {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+    }
+    .upload-icon {
+        width: 56px;
+        height: 56px;
+        background: var(--bg-tertiary);
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+    }
+    .upload-icon svg {
+        width: 28px;
+        height: 28px;
+        color: var(--text-secondary);
+    }
+    .file-name {
+        display: none;
+        margin-top: 12px;
+        padding: 8px 14px;
+        background: var(--bg-tertiary);
+        border-radius: var(--radius-sm);
+        font-size: 0.8125rem;
+        color: var(--text-primary);
+        font-family: 'Geist Mono', monospace;
+    }
+    .file-name.visible {
+        display: inline-block;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <h1>Convertir un fichier Office en PDF</h1>
+    <p>Uploadez un fichier Word, Excel ou PowerPoint pour le convertir</p>
+</div>
+
+<div class="card" style="max-width: 600px;">
+    <div class="flex gap-2 items-center mb-3" style="padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle);">
+        <div class="card-icon" style="margin-bottom: 0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+            </svg>
+        </div>
+        <div>
+            <h3 style="font-size: 0.9375rem; font-weight: 600; margin-bottom: 2px;">Office vers PDF</h3>
+            <p class="text-tertiary" style="font-size: 0.8125rem;">.doc, .docx, .xls, .xlsx, .ppt, .pptx, .odt, .ods, .odp</p>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" data-turbo="false">
+        <div class="form-group">
+            <label for="file">Fichier à convertir</label>
+            <div class="upload-zone" id="uploadZone">
+                <input type="file" name="file" id="file" required
+                       accept=".doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.odp">
+                <div class="upload-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                </div>
+                <p class="text-secondary" style="font-size: 0.9375rem; margin-bottom: 4px;">Cliquez ou déposez un fichier ici</p>
+                <p class="text-tertiary" style="font-size: 0.75rem;">Taille max : 10 Mo</p>
+                <span class="file-name" id="fileName"></span>
+            </div>
+        </div>
+
+        {{ include('pdf/_email_options.html.twig', { contacts: contacts|default([]) }) }}
+
+        <div class="flex gap-1 mt-3">
+            <button type="submit" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                Generer le PDF
+            </button>
+            <a href="{{ path('app_pdf_index') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('file');
+    const uploadZone = document.getElementById('uploadZone');
+    const fileName = document.getElementById('fileName');
+
+    fileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            fileName.textContent = this.files[0].name;
+            fileName.classList.add('visible');
+        } else {
+            fileName.classList.remove('visible');
+        }
+    });
+
+    uploadZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('dragover');
+    });
+
+    uploadZone.addEventListener('dragleave', function() {
+        this.classList.remove('dragover');
+    });
+
+    uploadZone.addEventListener('drop', function() {
+        this.classList.remove('dragover');
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement annule - PDF Converter{% endblock %}
+
+{% block body %}
+<div class="page-header" style="text-align: center;">
+    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+    </div>
+    <h1>Paiement annule</h1>
+    <p>Votre paiement n'a pas ete effectue</p>
+</div>
+
+<div class="card" style="max-width: 500px; margin: 0 auto; text-align: center;">
+    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 12px; justify-content: center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span style="color: #ef4444; font-weight: 500;">
+                Aucun montant n'a ete debite
+            </span>
+        </div>
+    </div>
+
+    <p class="text-secondary" style="margin-bottom: 24px;">
+        Vous avez annule le processus de paiement. Si vous avez rencontre un probleme,
+        n'hesitez pas a reessayer ou a nous contacter.
+    </p>
+
+    <div class="flex gap-1" style="justify-content: center;">
+        <a href="{{ path('app_subscription') }}" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            Voir les plans
+        </a>
+        <a href="{{ path('app_home') }}" class="btn btn-secondary">
+            Retour a l'accueil
+        </a>
+    </div>
+</div>
+{% endblock %}

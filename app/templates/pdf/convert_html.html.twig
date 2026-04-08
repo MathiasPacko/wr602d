@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}HTML vers PDF - PDF Converter{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .code-editor {
+        font-family: 'Geist Mono', 'SF Mono', Monaco, monospace;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        tab-size: 2;
+    }
+    .margin-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+    .margin-grid .form-group {
+        margin-bottom: 0;
+    }
+    .margin-grid label {
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+    }
+    .margin-grid input {
+        text-align: center;
+        padding: 8px 10px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <h1>Convertir du HTML en PDF</h1>
+    <p>Collez votre code HTML pour le convertir en document PDF</p>
+</div>
+
+<div class="card" style="max-width: 800px;">
+    <div class="flex gap-2 items-center mb-3" style="padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle);">
+        <div class="card-icon" style="margin-bottom: 0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <polyline points="16 18 22 12 16 6"/>
+                <polyline points="8 6 2 12 8 18"/>
+            </svg>
+        </div>
+        <div>
+            <h3 style="font-size: 0.9375rem; font-weight: 600; margin-bottom: 2px;">HTML vers PDF</h3>
+            <p class="text-tertiary" style="font-size: 0.8125rem;">Le HTML sera rendu avec CSS et converti en PDF haute qualité</p>
+        </div>
+    </div>
+
+    <form method="post" data-turbo="false">
+        <div class="form-group">
+            <label for="html_content">Code HTML</label>
+            <textarea name="html_content" id="html_content" class="form-control code-editor" rows="16" required
+                      placeholder="<!DOCTYPE html>
+<html>
+<head>
+    <title>Mon document</title>
+    <style>
+        body { font-family: system-ui, sans-serif; }
+        h1 { color: #1a1a1a; }
+    </style>
+</head>
+<body>
+    <h1>Titre</h1>
+    <p>Contenu de votre document...</p>
+</body>
+</html>"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label style="margin-bottom: 12px;">Marges (en pouces)</label>
+            <div class="margin-grid">
+                <div class="form-group">
+                    <label for="margin_top">Haut</label>
+                    <input type="text" name="margin_top" id="margin_top" class="form-control" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="margin_bottom">Bas</label>
+                    <input type="text" name="margin_bottom" id="margin_bottom" class="form-control" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="margin_left">Gauche</label>
+                    <input type="text" name="margin_left" id="margin_left" class="form-control" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="margin_right">Droite</label>
+                    <input type="text" name="margin_right" id="margin_right" class="form-control" value="1">
+                </div>
+            </div>
+        </div>
+
+        {{ include('pdf/_email_options.html.twig', { contacts: contacts|default([]) }) }}
+
+        <div class="flex gap-1 mt-3">
+            <button type="submit" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                Generer le PDF
+            </button>
+            <a href="{{ path('app_pdf_index') }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
